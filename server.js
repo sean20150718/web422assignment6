@@ -12,14 +12,13 @@ const HTTP_PORT = process.env.PORT || 8080;
 
 app.use(express.json());
 app.use(cors());
-let ExtractJwt = passportJWT.ExtractJwt;
-let JwtStrategy = passportJWT.Strategy;
+var ExtractJwt = passportJWT.ExtractJwt;
+var JwtStrategy = passportJWT.Strategy;
 // Configure its options
-let jwtOptions = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('jwt'),
-    secretOrKey:  process.env.JWT_SECRET,
-  };
-
+var jwtOptions = {}
+ jwtOptions.jwtFromRequest= ExtractJwt.fromAuthHeaderWithScheme('jwt');
+ jwtOptions.secretOrKey=process.env.JWT_SECRET;
+  
 let strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
   console.log('payload received', jwt_payload);
   if (jwt_payload) {
@@ -54,15 +53,17 @@ app.post("/api/user/login", (req, res) => {
             _id: user._id,
             userName: user.userName,
           };
-          
-        let token = jwt.sign(payload, jwtOptions.secretOrKey);
-        res.json({ "message": "login successful"});
+        console.log(payload); // Add this line to check the payload
+        var token = jwt.sign(payload, jwtOptions.secretOrKey);
+        
+        res.json({ "message": "login successful","token":token});
     }).catch(msg => {
         res.status(422).json({ "message": msg });
     });
 });
 
-app.get("/api/user/favourites",passport.authenticate('jwt', { session: false }), (req, res) => {
+// app.get("/api/user/favourites",passport.authenticate('jwt', { session: false }), (req, res) => {
+    app.get("/api/user/favourites", (req, res) => { 
     userService.getFavourites(req.user._id)
     .then(data => {
         res.json(data);
