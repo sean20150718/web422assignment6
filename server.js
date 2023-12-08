@@ -49,7 +49,7 @@ app.post("/api/user/register", (req, res) => {
 app.post("/api/user/login", (req, res) => {
     userService.checkUser(req.body)
     .then((user) => {
-        let payload = {
+        var payload = {
             _id: user._id,
             userName: user.userName,
           };
@@ -62,9 +62,8 @@ app.post("/api/user/login", (req, res) => {
     });
 });
 
-// app.get("/api/user/favourites",passport.authenticate('jwt', { session: false }), (req, res) => {
-    app.get("/api/user/favourites", (req, res) => { 
-    userService.getFavourites(req.user._id)
+app.get("/api/user/favourites",passport.authenticate('jwt', { session: false }), (req, res) => {
+     userService.getFavourites(req.user._id)
     .then(data => {
         res.json(data);
     }).catch(msg => {
